@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101b30">
+<title>Lumină inteligentă</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header>
+  <div><span class="logo">◈</span> Lumină inteligentă<small id="clientLabel"></small></div>
+  <nav id="adminNav" hidden>
+    <button id="homeNav">Acasă</button>
+    <button id="settingsNav">Setări</button>
+  </nav>
+</header>
+
+<main>
+  <div id="message" role="status" aria-live="polite"></div>
+
+  <!-- ===== AUTENTIFICARE (client + administrator) ===== -->
+  <section id="login" hidden>
+    <div class="card">
+      <h1>Conectare</h1>
+      <form id="loginForm">
+        <label>E-mail<input id="email" type="email" autocomplete="username" required></label>
+        <label>Parolă<input id="password" type="password" autocomplete="current-password" required></label>
+        <button class="primary" type="submit">Conectare</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== PRIMA CONFIGURARE (numai administrator, aparatul nu are încă proiect) ===== -->
+  <section id="setup" hidden>
+    <div class="card">
+      <h1>Aplicație neconfigurată</h1>
+      <p>Deschide linkul de instalare primit de la administrator.</p>
+      <button id="setupAdmin">Configurare administrator</button>
+    </div>
+  </section>
+
+  <!-- ===== ACASĂ ===== -->
+  <section id="home" hidden>
+    <div class="connection">
+      <span id="cloudDot" class="dot"></span><span id="cloudText"></span>
+      <span id="userText"></span>
+      <button id="logoutTop" class="link">Deconectare</button>
+    </div>
+
+    <div id="empty" class="card"><p id="emptyText"></p></div>
+
+    <article id="roomCard" class="card" hidden>
+      <div class="roomnav">
+        <button id="prev" aria-label="Camera precedentă">❮</button>
+        <div><h1 id="roomName"></h1><small id="roomPosition"></small></div>
+        <button id="next" aria-label="Camera următoare">❯</button>
+      </div>
+
+      <div class="presence"><span id="deviceDot" class="dot"></span><span id="deviceText"></span></div>
+      <p id="lastSeen" class="muted"></p>
+      <p id="deviceWarning" class="warning"></p>
+
+      <div class="temp-box">
+        <div>
+          <small>Temperatură XY-MOS</small>
+          <div class="temp"><span id="tempValue">--</span><span class="unit">°C</span></div>
+          <small id="tempTime" class="muted"></small>
+        </div>
+        <span id="protBadge" class="badge idle">—</span>
+      </div>
+      <p id="protAlert" class="alert" hidden></p>
+
+      <div class="control">
+        <div><h2>Bec principal</h2><small>Releu</small></div>
+        <button id="relay" class="toggle" aria-pressed="false">OFF</button>
+      </div>
+      <div class="control">
+        <div><h2>Bandă LED</h2><small id="ledSub">Iluminare ambientală</small></div>
+        <button id="led" class="toggle" aria-pressed="false">OFF</button>
+      </div>
+      <div class="brightness">
+        <h2>Luminozitate <span id="levelText"></span></h2>
+        <div id="levels"></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ===== SETĂRI (numai administrator) ===== -->
+  <section id="settings" hidden>
+    <h1>Setări administrator</h1>
+
+    <div class="card">
+      <h2>Configurare Firebase</h2>
+      <form id="configForm">
+        <label>Nume client / instalație<input id="client" maxlength="80" required></label>
+        <label>Nod rădăcină (ROOT_NODE)<input id="root" value="luci" required></label>
+        <label>Configurația Firebase<textarea id="configText" rows="10" spellcheck="false" placeholder='Lipește obiectul firebaseConfig' required></textarea></label>
+        <label class="check"><input type="checkbox" id="allowUnknown"> Permite comenzi fără last_seen (firmware vechi)</label>
+        <button class="primary" type="submit">Salvează și conectează proiectul</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Link pentru client</h2>
+      <p>Clientul deschide linkul o singură dată pe telefon; apoi vede doar ecranul de conectare.</p>
+      <textarea id="clientLink" rows="3" readonly></textarea>
+      <button id="copyLink">Copiază linkul</button>
+    </div>
+
+    <div class="card">
+      <div class="titleline"><h2>Configurare Camere</h2><button id="addRoom" aria-label="Adaugă o cameră" class="primary">＋</button></div>
+      <p>ID-ul trebuie să coincidă cu ROOM_ID din ESP.</p>
+      <div id="roomList"></div>
+    </div>
+
+    <div class="card">
+      <h2>Cont</h2>
+      <p id="accountEmail"></p>
+      <button id="logout">Deconectare</button>
+    </div>
+  </section>
+</main>
+
+<dialog id="roomDialog">
+  <form id="roomForm">
+    <h2>Adaugă o cameră</h2>
+    <label>Nume afișat<input id="newName" maxlength="60" required></label>
+    <label>ID cameră / ROOM_ID<input id="newId" maxlength="64" required pattern="[a-z0-9_\-]+"></label>
+    <div class="actions"><button id="cancelRoom" type="button">Anulează</button><button class="primary" type="submit">Adaugă</button></div>
+  </form>
+</dialog>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>
